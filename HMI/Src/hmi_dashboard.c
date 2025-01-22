@@ -12,7 +12,7 @@ void hmi_dashboard_init(void)
 
 void hmi_dashboard_show_screen(void)
 {
-
+    
 }
 
 /***********************************************************************************/
