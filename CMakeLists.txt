@@ -94,6 +94,12 @@ ${PROJ_PATH}/Core/Startup/startup_stm32f103c8tx.s
 #
 set(include_path_DIRS
 
+${PROJ_PATH}/HMI/Inc
+${PROJ_PATH}/App/Src
+${PROJ_PATH}/DISPLAY/Inc
+${PROJ_PATH}/App/Inc
+${PROJ_PATH}/App
+
 ${PROJ_PATH}/Core/Inc 
 ${PROJ_PATH}/Drivers/STM32F1xx_HAL_Driver/Inc 
 ${PROJ_PATH}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy 
@@ -105,11 +111,7 @@ ${PROJ_PATH}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3
 ${PROJ_PATH}/Drivers/CMSIS/Device/ST/STM32F1xx/Include 
 ${PROJ_PATH}/Drivers/CMSIS/Include
 
-${PROJ_PATH}/HMI/Inc
 
-${PROJ_PATH}/DISPLAY/Inc
-
-${PROJ_PATH}/App/Inc
 
 )
 

@@ -291,8 +291,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(MCU_STATUS_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BT_OUT_STATE_Pin BT_SEL_CC_CV_Pin BT_RIGHT_Pin BT_LEFT_Pin */
-  GPIO_InitStruct.Pin = BT_OUT_STATE_Pin|BT_SEL_CC_CV_Pin|BT_RIGHT_Pin|BT_LEFT_Pin;
+  /*Configure GPIO pins : ENC_BT_Pin BT_LEFT_Pin BT_SEL_CC_CV_Pin BT_RIGHT_Pin
+                           BT_OUT_STATE_Pin */
+  GPIO_InitStruct.Pin = ENC_BT_Pin|BT_LEFT_Pin|BT_SEL_CC_CV_Pin|BT_RIGHT_Pin
+                          |BT_OUT_STATE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);

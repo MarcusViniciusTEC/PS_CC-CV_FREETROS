@@ -1,6 +1,8 @@
 #include "hmi.h"
 #include "hmi_types.h"
 
+#include "buttons.h"
+
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 
@@ -12,8 +14,7 @@
 
 hmi_screen_info_t hmi_vector_screens[HMI_NUMBER_OF_SCREENS] = vector_hmi_screens_default;
 hmi_ctrl_t hmi_ctrl = {0};
-
-
+button_data_t buttons_data_vector[NUMBER_OF_BUTTONS] = vector_buttons_data_default;
 
 /***********************************************************************************/
 // Function prototypes
@@ -24,23 +25,16 @@ void hmi_tread(void const *pvParameters);
 
 static void hmi_showing_screen(void);
 static void hmi_showing_data(void);
-static void hmi_showing_update_data(button_id_t buttonid, button_press_type_t button_press_type);
+
 
 
 /***********************************************************************************/
 
 
-
-
-// static button_data_t button_data[]
-// {
-//     {{BT_OUT_STATE_GPIO_Port, BT_OUT_STATE_Pin}, hmi_showing_update_data, BUTTON_STATE_START, BUTTON_OUT_STATE_ID, RESET, BUTTON_FIRST_TIME}
-// }
-
 void hmi_init(void)
 {
-    hmi_ctrl.id = hmi_id_dashboard;
-
+    hmi_ctrl.id = HMI_ID_DASHBOARD;
+    hmi_vector_screens[hmi_ctrl.id].init();
     TaskHandle_t xHandle = NULL;
      xTaskCreate((TaskFunction_t)hmi_tread,         /* Function that implements the task. */
                     "HMI",                         /* Text name for the task. */
@@ -66,9 +60,19 @@ static void hmi_showing_data(void)
 
 /***********************************************************************************/
 
-static void hmi_showing_update_data(button_id_t buttonid, button_press_type_t button_press_type)
+void hmi_showing_update_data(button_id_t button_id, button_press_type_t button_press_type)
 {
-    hmi_vector_screens[hmi_ctrl.id].update_data(button_id_t buttonid, button_press_type_t button_press_type);
+    hmi_vector_screens[hmi_ctrl.id].update_data(button_id,  button_press_type);
+}
+
+/***********************************************************************************/
+
+static void hmi_buttons_update_state(void)
+{
+    for(uint8_t index_buttons = 0; index_buttons < NUMBER_OF_BUTTONS; index_buttons++)
+    {
+        read_buttons_state(&buttons_data_vector[index_buttons]);    
+    }
 }
 
 /***********************************************************************************/
@@ -88,20 +92,11 @@ void hmi_tread(void const *pvParameters)
             hmi_ctrl.state = HMI_SHOWING_UPDATE_DATA;
             break;
         case HMI_SHOWING_UPDATE_DATA:
-            
+            hmi_buttons_update_state();
             break;
         default:
             break;
         }
-        vTaskDelay(200);
-        // ssd1306_Fill(Black);
-        // ssd1306_SetCursor(46, 2);
-        // ssd1306_WriteString("CURRENT", Font_7x10, White) ;
-        // ssd1306_InvertRectangle(0,1,127,10);  
-        // ssd1306_Line(0,13,128,13,White);
-        // ssd1306_UpdateScreen();
-        // static uint8_t count = 0;
-        // count++;
-
+        vTaskDelay(1);
     }
 }

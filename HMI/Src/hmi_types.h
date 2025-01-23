@@ -3,12 +3,13 @@
 
 
 #include "hmi_cfg.h"
-#include ""
+#include "buttons_types.h"
 
 typedef enum
 {
-    hmi_id_dashboard = 0U,
-    hmi_number_of_id
+    HMI_ID_DASHBOARD = 0U,
+    HMI_ID_MENU,
+    HMI_NUMBERS_OF_ID
 }hmi_screens_id_t;
 
 typedef struct 

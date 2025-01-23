@@ -59,14 +59,20 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCU_STATUS_LED_Pin GPIO_PIN_13
 #define MCU_STATUS_LED_GPIO_Port GPIOC
-#define BT_OUT_STATE_Pin GPIO_PIN_12
-#define BT_OUT_STATE_GPIO_Port GPIOB
+#define ENC_DT_Pin GPIO_PIN_6
+#define ENC_DT_GPIO_Port GPIOA
+#define ENC_CLK_Pin GPIO_PIN_7
+#define ENC_CLK_GPIO_Port GPIOA
+#define ENC_BT_Pin GPIO_PIN_0
+#define ENC_BT_GPIO_Port GPIOB
+#define BT_LEFT_Pin GPIO_PIN_12
+#define BT_LEFT_GPIO_Port GPIOB
 #define BT_SEL_CC_CV_Pin GPIO_PIN_13
 #define BT_SEL_CC_CV_GPIO_Port GPIOB
 #define BT_RIGHT_Pin GPIO_PIN_14
 #define BT_RIGHT_GPIO_Port GPIOB
-#define BT_LEFT_Pin GPIO_PIN_15
-#define BT_LEFT_GPIO_Port GPIOB
+#define BT_OUT_STATE_Pin GPIO_PIN_15
+#define BT_OUT_STATE_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

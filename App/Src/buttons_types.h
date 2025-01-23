@@ -1,6 +1,7 @@
 #ifndef _BUTTONS_TYPES_H_
 #define _BUTTONS_TYPES_H_
 
+#include "buttons_cfg.h"
 
 typedef struct
 {
@@ -21,6 +22,7 @@ typedef enum
     BUTTON_LEFT_ID,
     BUTTON_RIGHT_ID,
     BUTTON_SEL_CC_CV_ID,
+    BUTTON_ENC_ID,
     NUMBER_OF_BUTTONS,
 }button_id_t;
 
