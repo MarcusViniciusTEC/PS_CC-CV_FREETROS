@@ -1,4 +1,3 @@
-
 #include "hmi.h"
 #include "hmi_types.h"
 
@@ -9,11 +8,12 @@
 #include "task.h"
 #include "cmsis_os.h"
 
-
 /***********************************************************************************/
 
 hmi_screen_info_t hmi_vector_screens[HMI_NUMBER_OF_SCREENS] = vector_hmi_screens_default;
 hmi_ctrl_t hmi_ctrl = {0};
+
+
 
 /***********************************************************************************/
 // Function prototypes
@@ -24,10 +24,18 @@ void hmi_tread(void const *pvParameters);
 
 static void hmi_showing_screen(void);
 static void hmi_showing_data(void);
-static void hmi_showing_update_data(void);
+static void hmi_showing_update_data(button_id_t buttonid, button_press_type_t button_press_type);
 
 
 /***********************************************************************************/
+
+
+
+
+// static button_data_t button_data[]
+// {
+//     {{BT_OUT_STATE_GPIO_Port, BT_OUT_STATE_Pin}, hmi_showing_update_data, BUTTON_STATE_START, BUTTON_OUT_STATE_ID, RESET, BUTTON_FIRST_TIME}
+// }
 
 void hmi_init(void)
 {
@@ -58,9 +66,9 @@ static void hmi_showing_data(void)
 
 /***********************************************************************************/
 
-static void hmi_showing_update_data(void)
+static void hmi_showing_update_data(button_id_t buttonid, button_press_type_t button_press_type)
 {
-    hmi_vector_screens[hmi_ctrl.id].update_data();
+    hmi_vector_screens[hmi_ctrl.id].update_data(button_id_t buttonid, button_press_type_t button_press_type);
 }
 
 /***********************************************************************************/
@@ -80,7 +88,7 @@ void hmi_tread(void const *pvParameters)
             hmi_ctrl.state = HMI_SHOWING_UPDATE_DATA;
             break;
         case HMI_SHOWING_UPDATE_DATA:
-            hmi_showing_update_data();
+            
             break;
         default:
             break;

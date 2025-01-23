@@ -20,7 +20,9 @@
         "ssd1306_fonts.h": "c",
         "encoder.h": "c",
         "compare": "c",
-        "hmi.C": "cpp"
+        "hmi.c": "cpp",
+        "buttons_types.h": "c",
+        "buttons_cfg.h": "c"
     }
 
 }

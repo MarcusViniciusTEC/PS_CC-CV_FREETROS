@@ -39,8 +39,10 @@ set(EXECUTABLE                      ${CMAKE_PROJECT_NAME})
 #
 set(sources_SRCS
 
+${PROJ_PATH}/App/Src/buttons.c
 ${PROJ_PATH}/HMI/Src/hmi.c
 ${PROJ_PATH}/HMI/Src/hmi_dashboard.c
+
 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306.c 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306_tests.c
@@ -106,6 +108,8 @@ ${PROJ_PATH}/Drivers/CMSIS/Include
 ${PROJ_PATH}/HMI/Inc
 
 ${PROJ_PATH}/DISPLAY/Inc
+
+${PROJ_PATH}/App/Inc
 
 )
 

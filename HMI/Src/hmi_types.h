@@ -3,6 +3,7 @@
 
 
 #include "hmi_cfg.h"
+#include ""
 
 typedef enum
 {
@@ -16,7 +17,7 @@ typedef struct
     void(*init)(void);
     void(*show_screen)(void);
     void(*show_data)(void);
-    void(*update_data)(void);
+    void(*update_data)(button_id_t button_id, button_press_type_t button_press_type);
 }hmi_screen_info_t;
 
 typedef enum

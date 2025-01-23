@@ -1,8 +1,5 @@
 
-#include "button.h";
-#include "buttons_cfg.h"
-
-
+#include "buttons.h"
 
 void read_buttons_state(button_data_t *button_event)
 {
