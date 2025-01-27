@@ -4,6 +4,7 @@
 
 #include "hmi_cfg.h"
 #include "buttons_types.h"
+#include "encoder_types.h"
 
 typedef enum
 {
@@ -18,7 +19,9 @@ typedef struct
     void(*init)(void);
     void(*show_screen)(void);
     void(*show_data)(void);
-    void(*update_data)(button_id_t button_id, button_press_type_t button_press_type);
+    void(*update_data_buttons)(button_id_t button_id, button_press_type_t button_press_type);
+    void(*update_data_encoder)(enc_state_t enc_state);
+
 }hmi_screen_info_t;
 
 typedef enum

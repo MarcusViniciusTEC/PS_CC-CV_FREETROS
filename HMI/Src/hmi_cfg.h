@@ -22,7 +22,8 @@
         hmi_dashboard_init,             \
         hmi_dashboard_show_screen,      \
         hmi_dashboard_show_data,        \
-        hmi_dashboard_update_screen     \
+        hmi_dashboard_update_screen,    \
+        hmi_dashboard_update_encoder    \
     }                                   \
 }
 

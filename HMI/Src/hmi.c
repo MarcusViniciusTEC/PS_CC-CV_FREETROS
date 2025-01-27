@@ -2,6 +2,7 @@
 #include "hmi_types.h"
 
 #include "buttons.h"
+#include "encoder.h"
 
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
@@ -25,10 +26,15 @@ void hmi_tread(void const *pvParameters);
 
 static void hmi_showing_screen(void);
 static void hmi_showing_data(void);
+static void hmi_encoder_update_state(void);
+void hmi_showing_update_data_encoder(enc_state_t enc_state);
 
 
 
 /***********************************************************************************/
+
+static const encoder_data_t encoder_data [] = {hmi_showing_update_data_encoder, 0, 0};
+
 
 
 void hmi_init(void)
@@ -62,7 +68,14 @@ static void hmi_showing_data(void)
 
 void hmi_showing_update_data(button_id_t button_id, button_press_type_t button_press_type)
 {
-    hmi_vector_screens[hmi_ctrl.id].update_data(button_id,  button_press_type);
+    hmi_vector_screens[hmi_ctrl.id].update_data_buttons(button_id,  button_press_type);
+}
+
+/***********************************************************************************/
+
+void hmi_showing_update_data_encoder(enc_state_t enc_state)
+{
+    hmi_vector_screens[hmi_ctrl.id].update_data_encoder(enc_state);
 }
 
 /***********************************************************************************/
@@ -73,6 +86,11 @@ static void hmi_buttons_update_state(void)
     {
         read_buttons_state(&buttons_data_vector[index_buttons]);    
     }
+}
+
+static void hmi_encoder_update_state()
+{
+    read_encoder_state(&encoder_data[0]);
 }
 
 /***********************************************************************************/
@@ -93,6 +111,7 @@ void hmi_tread(void const *pvParameters)
             break;
         case HMI_SHOWING_UPDATE_DATA:
             hmi_buttons_update_state();
+            hmi_encoder_update_state();
             break;
         default:
             break;
