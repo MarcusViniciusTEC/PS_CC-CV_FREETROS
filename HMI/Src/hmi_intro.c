@@ -32,18 +32,16 @@ void hmi_intro_show_screen(void)
 void hmi_intro_show_data(void)
 {
     static uint32_t last_tick = 0;
-    if(HAL_GetTick() - last_tick >= 4000)
+    if(HAL_GetTick() - last_tick >= TIME_EXECUTIN_INTRO)
     {
         hmi_set_screen(HMI_ID_DASHBOARD);
     }
-
 }
 
 /***********************************************************************************/
 
 void hmi_intro_update_screen(button_id_t button_id, button_press_type_t button_press_type)
 {
-
     switch (button_id)
     {
     case BUTTON_ENC_ID:
@@ -53,11 +51,6 @@ void hmi_intro_update_screen(button_id_t button_id, button_press_type_t button_p
     default:
         break;
     }
-
-
-
-
-
 }
 
 /***********************************************************************************/

@@ -7,12 +7,13 @@
 #include "hmi_dashboard.h"
 #include "hmi_intro.h"
 #include "buttons_types.h"
-#include "hmi.h"
+#include "hmi_menu.h"
 
+#include "hmi.h"
 
 /*******************************************************************************/
 
-#define HMI_NUMBER_OF_SCREENS 2
+#define HMI_NUMBER_OF_SCREENS 3
 
 /*******************************************************************************/
 
@@ -34,6 +35,15 @@
         hmi_dashboard_show_data,        \
         hmi_dashboard_update_screen,    \
         hmi_dashboard_update_encoder    \
+    }                                   \
+    ,                                   \
+    {                                   \
+        HMI_ID_MENU,                    \
+        hmi_menu_init,                  \
+        hmi_menu_show_screen,           \
+        hmi_menu_show_data,             \
+        hmi_menu_update_screen,         \
+        hmi_menu_update_encoder         \
     }                                   \
 }
 

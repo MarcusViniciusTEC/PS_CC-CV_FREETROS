@@ -12,4 +12,8 @@ void hmi_intro_update_screen(button_id_t button_id, button_press_type_t button_p
 void hmi_intro_update_encoder(enc_state_t enc_state);
 
 
+
+#define TIME_EXECUTIN_INTRO 4000
+
+
 #endif
