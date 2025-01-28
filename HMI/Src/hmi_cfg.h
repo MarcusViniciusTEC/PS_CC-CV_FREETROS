@@ -5,18 +5,28 @@
 /*******************************************************************************/
 
 #include "hmi_dashboard.h"
+#include "hmi_intro.h"
 #include "buttons_types.h"
 #include "hmi.h"
 
 
 /*******************************************************************************/
 
-#define HMI_NUMBER_OF_SCREENS 1
+#define HMI_NUMBER_OF_SCREENS 2
 
 /*******************************************************************************/
 
 #define vector_hmi_screens_default      \
 {                                       \
+    {                                   \
+        HMI_ID_INTRO,                   \
+        hmi_intro_init,                 \
+        hmi_intro_show_screen,          \
+        hmi_intro_show_data,            \
+        hmi_intro_update_screen,        \
+        hmi_intro_update_encoder        \
+    }                                   \
+    ,                                   \
     {                                   \
         HMI_ID_DASHBOARD,               \
         hmi_dashboard_init,             \

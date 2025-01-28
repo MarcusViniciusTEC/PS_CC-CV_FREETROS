@@ -18,7 +18,10 @@ void hmi_dashboard_init(void)
 
 void hmi_dashboard_show_screen(void)
 {
-    
+    ssd1306_Fill(Black);
+    ssd1306_SetCursor(10, 10);
+    ssd1306_WriteString("DASHBOARD", Font_7x10, White) ;
+    ssd1306_UpdateScreen();
 }
 
 /***********************************************************************************/

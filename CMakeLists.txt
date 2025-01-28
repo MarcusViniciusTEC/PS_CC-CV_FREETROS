@@ -43,7 +43,7 @@ ${PROJ_PATH}/App/Src/buttons.c
 ${PROJ_PATH}/App/Src/encoder.c
 ${PROJ_PATH}/HMI/Src/hmi.c
 ${PROJ_PATH}/HMI/Src/hmi_dashboard.c
-
+${PROJ_PATH}/HMI/Src/hmi_intro.c
 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306.c 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306_tests.c
@@ -96,6 +96,7 @@ ${PROJ_PATH}/Core/Startup/startup_stm32f103c8tx.s
 set(include_path_DIRS
 
 ${PROJ_PATH}/HMI/Inc
+${PROJ_PATH}/HMI/Src
 ${PROJ_PATH}/App/Src
 ${PROJ_PATH}/DISPLAY/Inc
 ${PROJ_PATH}/App/Inc

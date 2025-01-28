@@ -2,35 +2,63 @@
 #include "encoder_types.h"
 #include "stdbool.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 
 /***********************************************************************************/
+
  static enc_ctrl_t  enc_ctrl = {0};
 
+/***********************************************************************************/
 
+void encoder_thread(void const *pvParameters);
+void encoder_update(void);
+
+/***********************************************************************************/
 
 void encoder_init(void)
 {
-
     enc_ctrl.state = ENC_STATE_STOPED;
     enc_ctrl.event = EVENT_STOPED;
+    TaskHandle_t xHandle = NULL;
+    xTaskCreate((TaskFunction_t)encoder_thread,     /* Function that implements the task. */
+                    "ENCODER",                      /* Text name for the task. */
+                    128	,                           /* Stack size in words, not bytes. */
+                    NULL,                           /* Parameter passed into the task. */
+                    osPriorityNormal,               /* Priority at which the task is created. */
+                    &xHandle );                     /* Used to pass out the created task's handle. */
 }
 
-
 /***********************************************************************************/
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+
+void encoder_update(void)
 {
-    if(GPIO_Pin == IT_ENC_CLK_Pin)
+    static uint32_t current_state = 0;
+    static uint32_t last_state = 0;
+    current_state = (uint32_t)((TIM3->CNT)/4); 
+    if(current_state > last_state)
     {
         enc_ctrl.event = EVENT_RUN;
-        if(HAL_GPIO_ReadPin(IT_ENC_DT_GPIO_Port, IT_ENC_DT_Pin) == GPIO_PIN_RESET)
-        {
-            enc_ctrl.state = ENC_STATE_CW;
-        }
-        else 
-        {
-            enc_ctrl.state = ENC_STATE_CCW;
-        } 
+        enc_ctrl.state = ENC_STATE_CCW;
+        last_state = current_state;
+    }
+    else if(current_state < last_state)
+    {
+        enc_ctrl.event = EVENT_RUN;
+        enc_ctrl.state = ENC_STATE_CW;
+        last_state = current_state;
+    }
+}
 
+/***********************************************************************************/
+
+void encoder_thread(void const *pvParameter)
+{
+    for(;;)
+    {
+        encoder_update();
+        vTaskDelay(30);
     }
 }
 

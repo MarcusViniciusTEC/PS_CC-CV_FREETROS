@@ -1,5 +1,5 @@
 #include "hmi.h"
-#include "hmi_types.h"
+
 
 #include "buttons.h"
 #include "encoder.h"
@@ -28,19 +28,19 @@ static void hmi_showing_screen(void);
 static void hmi_showing_data(void);
 static void hmi_encoder_update_state(void);
 void hmi_showing_update_data_encoder(enc_state_t enc_state);
-
-
+void hmi_set_screen(hmi_screens_id_t hmi_screens_id);
+hmi_screens_id_t hmi_get_screen(void);
 
 /***********************************************************************************/
 
-static const encoder_data_t encoder_data [] = {hmi_showing_update_data_encoder, 0, 0};
+static const encoder_data_t encoder_data [] = {{hmi_showing_update_data_encoder, 0, 0}};
 
-
+/***********************************************************************************/
 
 void hmi_init(void)
 {
-    hmi_ctrl.id = HMI_ID_DASHBOARD;
-    hmi_vector_screens[hmi_ctrl.id].init();
+    hmi_ctrl.screen_id = HMI_ID_INTRO;
+    hmi_vector_screens[hmi_ctrl.screen_id].init();
     TaskHandle_t xHandle = NULL;
      xTaskCreate((TaskFunction_t)hmi_tread,         /* Function that implements the task. */
                     "HMI",                         /* Text name for the task. */
@@ -52,30 +52,44 @@ void hmi_init(void)
 
 /***********************************************************************************/
 
+hmi_screens_id_t hmi_get_screen(void)
+{
+    return hmi_ctrl.screen_id;
+}
+
+/***********************************************************************************/
+
+void hmi_set_screen(hmi_screens_id_t hmi_screens_id)
+{
+    hmi_ctrl.next_screen_id = hmi_screens_id;
+}
+
+/***********************************************************************************/
+
 static void hmi_showing_screen(void)
 {
-    hmi_vector_screens[hmi_ctrl.id].show_screen();
+    hmi_vector_screens[hmi_ctrl.screen_id].show_screen();
 }
 
 /***********************************************************************************/
 
 static void hmi_showing_data(void)
 {
-    hmi_vector_screens[hmi_ctrl.id].show_data();
+    hmi_vector_screens[hmi_ctrl.screen_id].show_data();
 }
 
 /***********************************************************************************/
 
 void hmi_showing_update_data(button_id_t button_id, button_press_type_t button_press_type)
 {
-    hmi_vector_screens[hmi_ctrl.id].update_data_buttons(button_id,  button_press_type);
+    hmi_vector_screens[hmi_ctrl.screen_id].update_data_buttons(button_id,  button_press_type);
 }
 
 /***********************************************************************************/
 
 void hmi_showing_update_data_encoder(enc_state_t enc_state)
 {
-    hmi_vector_screens[hmi_ctrl.id].update_data_encoder(enc_state);
+    hmi_vector_screens[hmi_ctrl.screen_id].update_data_encoder(enc_state);
 }
 
 /***********************************************************************************/
@@ -88,6 +102,8 @@ static void hmi_buttons_update_state(void)
     }
 }
 
+/***********************************************************************************/
+
 static void hmi_encoder_update_state()
 {
     read_encoder_state(&encoder_data[0]);
@@ -99,6 +115,13 @@ void hmi_tread(void const *pvParameters)
 {
     for(;;)
     {
+        if(hmi_ctrl.screen_id != hmi_ctrl.next_screen_id)
+        {
+            hmi_ctrl.last_screen_id = hmi_ctrl.screen_id;
+            hmi_ctrl.screen_id = hmi_ctrl.next_screen_id;
+            hmi_ctrl.state = HMI_SHOWING_SCREEN;
+        }
+
         switch (hmi_ctrl.state)
         {
         case HMI_SHOWING_SCREEN:
@@ -112,10 +135,11 @@ void hmi_tread(void const *pvParameters)
         case HMI_SHOWING_UPDATE_DATA:
             hmi_buttons_update_state();
             hmi_encoder_update_state();
+            hmi_ctrl.state = HMI_SHOWING_DATA;
             break;
         default:
             break;
         }
-        vTaskDelay(1);
+        vTaskDelay(10/portTICK_PERIOD_MS);
     }
 }

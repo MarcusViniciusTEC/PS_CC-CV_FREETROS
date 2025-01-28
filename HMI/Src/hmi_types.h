@@ -8,14 +8,15 @@
 
 typedef enum
 {
-    HMI_ID_DASHBOARD = 0U,
+    HMI_ID_INTRO = 0U,
+    HMI_ID_DASHBOARD, 
     HMI_ID_MENU,
     HMI_NUMBERS_OF_ID
 }hmi_screens_id_t;
 
 typedef struct 
 {
-    hmi_screens_id_t screen_id;
+    hmi_screens_id_t screen_id_info;
     void(*init)(void);
     void(*show_screen)(void);
     void(*show_data)(void);
@@ -34,7 +35,9 @@ typedef enum
 
 typedef struct 
 {
-    hmi_screens_id_t id;
+    hmi_screens_id_t screen_id;
+    hmi_screens_id_t last_screen_id;
+    hmi_screens_id_t next_screen_id;
     hmi_screens_update_state_t state;
     
 }hmi_ctrl_t;
