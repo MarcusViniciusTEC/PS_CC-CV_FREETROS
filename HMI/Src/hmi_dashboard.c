@@ -23,11 +23,37 @@ static void hmi_dashboard_draw_cursor_voltage(void);
 static void hmi_dashboard_draw_cursor_current(void);
 static void hmi_dashboard_update_state_cursor(void);
 
+static void hmi_dashboard_increment_index(void);
+static void hmi_dashboard_decrement_index(void);
+static void hmi_dashboard_cursor_edit_toggle(void);
+
 /***********************************************************************************/
 
 void hmi_dashboard_init(void)
 {
     hmi_dashboard_crtl.cursor_edit =  HMI_CURSOR_EDIT_VOLTAGE;
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_increment_index(void)
+{
+    hmi_dashboard_crtl.index_cursor ++;
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_decrement_index(void)
+{
+    hmi_dashboard_crtl.index_cursor --;
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_cursor_edit_toggle(void)
+{
+    hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit; 
+    HAL_Delay(1);
 }
 
 /***********************************************************************************/
@@ -49,7 +75,6 @@ static void hmi_dashboard_draw_cursor_voltage(void)
     cursor_voltage = vector_cursor_retangle_voltage[hmi_dashboard_crtl.index_cursor];
     ssd1306_InvertRectangle(cursor_voltage.x1, cursor_voltage.y1, cursor_voltage.x2, cursor_voltage.y2);
 }
-
 
 /***********************************************************************************/
 
@@ -153,13 +178,23 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
     switch (button_id)
     {
     case BUTTON_LEFT_ID:
-        hmi_dashboard_crtl.index_cursor --;
+        hmi_dashboard_decrement_index();
         break;
     case BUTTON_RIGHT_ID:
-        hmi_dashboard_crtl.index_cursor ++;
+        hmi_dashboard_increment_index();
         break;
     case BUTTON_SEL_CC_CV_ID:
-        hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit;
+            switch (button_press_type)
+            {
+            case BUTTON_SHORT_PRESS:
+                hmi_dashboard_cursor_edit_toggle();
+                break;
+            case BUTTON_LONG_PRESS:
+
+                break;
+            default:
+                break;
+            }
         break;
     default:
         break;

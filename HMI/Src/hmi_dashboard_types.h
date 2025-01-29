@@ -2,7 +2,6 @@
 #ifndef _HMI_DASHBOARD_TYPES_H_
 #define _HMI_DASHBOARD_TYPES_H_
 
-
 #include "hmi_dashboard_cfg.h"
 
 typedef struct 
@@ -13,13 +12,11 @@ typedef struct
     uint8_t y2;
 }cursor_retangle_t;
 
-
 typedef enum
 {
-    HMI_CURSOR_EDIT_CURRENT = 0U,
-    HMI_CURSOR_EDIT_VOLTAGE
+    HMI_CURSOR_EDIT_VOLTAGE = 0U,
+    HMI_CURSOR_EDIT_CURRENT 
 }hmi_dashboard_cursor_edit_t;
-
 
 typedef struct 
 {
@@ -27,8 +24,6 @@ typedef struct
     hmi_dashboard_cursor_edit_t cursor_edit;
 
 }hmi_dashboard_crtl_t;
-
-
 
 
 #endif
