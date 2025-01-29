@@ -21,6 +21,7 @@ button_data_t buttons_data_vector[NUMBER_OF_BUTTONS] = vector_buttons_data_defau
 // Function prototypes
 
 void hmi_tread(void const *pvParameters);
+void hmi_tread_update_screen(void const *pvParameters);
 
 // private function
 
@@ -44,10 +45,17 @@ void hmi_init(void)
     TaskHandle_t xHandle = NULL;
      xTaskCreate((TaskFunction_t)hmi_tread,         /* Function that implements the task. */
                     "HMI",                         /* Text name for the task. */
+                    128	,                                   /* Stack size in words, not bytes. */
+                    NULL,                             /* Parameter passed into the task. */
+                    osPriorityRealtime,                        /* Priority at which the task is created. */
+                    &xHandle );                     /* Used to pass out the created task's handle. */
+
+    xTaskCreate((TaskFunction_t)hmi_tread_update_screen,         /* Function that implements the task. */
+                    "HMI UPDATE",                         /* Text name for the task. */
                     128	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
-                    osPriorityAboveNormal,          /* Priority at which the task is created. */
-                    &xHandle );                     /* Used to pass out the created task's handle. */
+                    osPriorityIdle,                      /* Priority at which the task is created. */
+                    &xHandle );                     /* Used to pass out the created task's handle. */                
 }
 
 /***********************************************************************************/
@@ -129,17 +137,31 @@ void hmi_tread(void const *pvParameters)
             hmi_ctrl.state = HMI_SHOWING_DATA;
             break;
         case HMI_SHOWING_DATA:
-            hmi_showing_data();
+            
             hmi_ctrl.state = HMI_SHOWING_UPDATE_DATA;
             break;
         case HMI_SHOWING_UPDATE_DATA:
             hmi_buttons_update_state();
             hmi_encoder_update_state();
-            hmi_ctrl.state = HMI_SHOWING_DATA;
+           // hmi_ctrl.state = HMI_SHOWING_DATA;
             break;
         default:
             break;
         }
-        vTaskDelay(10/portTICK_PERIOD_MS);
+        vTaskDelay(1/portTICK_PERIOD_MS);
     }
 }
+
+/***********************************************************************************/
+
+void hmi_tread_update_screen(void const *pvParameters)
+{
+    for(;;)
+    {
+        hmi_showing_data();
+        vTaskDelay(130/portTICK_PERIOD_MS);
+    }
+}
+
+
+/***********************************************************************************/

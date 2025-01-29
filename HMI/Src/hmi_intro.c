@@ -29,7 +29,7 @@ void hmi_intro_show_screen(void)
 
 /***********************************************************************************/
 
-void hmi_intro_show_data(void)
+void hmi_intro_update_data(void)
 {
     static uint32_t last_tick = 0;
     if(HAL_GetTick() - last_tick >= TIME_EXECUTIN_INTRO)
@@ -40,7 +40,7 @@ void hmi_intro_show_data(void)
 
 /***********************************************************************************/
 
-void hmi_intro_update_screen(button_id_t button_id, button_press_type_t button_press_type)
+void hmi_intro_update_button(button_id_t button_id, button_press_type_t button_press_type)
 {
     switch (button_id)
     {

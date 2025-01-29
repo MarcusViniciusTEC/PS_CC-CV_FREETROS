@@ -43,5 +43,4 @@ typedef struct
 }hmi_ctrl_t;
 
 
-
 #endif

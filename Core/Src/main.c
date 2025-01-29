@@ -344,7 +344,7 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
     HAL_GPIO_TogglePin(LED_MCU_STAUTS_1_GPIO_Port, LED_MCU_STAUTS_1_Pin);
-    vTaskDelay(100);
+    vTaskDelay(1000);
   }
   /* USER CODE END 5 */
 }
