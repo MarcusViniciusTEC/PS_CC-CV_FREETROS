@@ -47,14 +47,14 @@ void hmi_init(void)
                     "HMI",                         /* Text name for the task. */
                     256	,                                   /* Stack size in words, not bytes. */
                     NULL,                             /* Parameter passed into the task. */
-                    osPriorityRealtime,                        /* Priority at which the task is created. */
+                    osPriorityNormal ,                        /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */
 
     xTaskCreate((TaskFunction_t)hmi_tread_update_screen,         /* Function that implements the task. */
                     "HMI UPDATE",                         /* Text name for the task. */
                     256	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
-                    osPriorityIdle,                      /* Priority at which the task is created. */
+                    osPriorityNormal,                      /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */                
 }
 
@@ -148,7 +148,7 @@ void hmi_tread(void const *pvParameters)
         default:
             break;
         }
-        vTaskDelay(1/portTICK_PERIOD_MS);
+        vTaskDelay(1);
     }
 }
 
@@ -158,8 +158,8 @@ void hmi_tread_update_screen(void const *pvParameters)
 {
     for(;;)
     {
-        hmi_showing_data();
-        vTaskDelay(130/portTICK_PERIOD_MS);
+         hmi_showing_data();
+        vTaskDelay(100);
     }
 }
 

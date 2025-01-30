@@ -17,7 +17,8 @@ typedef enum
     INDEX_FIRST_DIGIT = 0U,
     INDEX_SECOND_DIGIT,
     INDEX_THIRD_DIGIT,
-    INDEX_FOURTH_DIGIT
+    INDEX_FOURTH_DIGIT,
+    NUMBER_OF_INDEX_DIGITS
 }hmi_digit_types_t;
 
 typedef enum
@@ -35,7 +36,7 @@ typedef struct
 
 typedef struct 
 {
-    uint16_t digit[4];
+    uint16_t digit[NUMBER_OF_INDEX_DIGITS];
 }hmi_edit_value_t;
 
 

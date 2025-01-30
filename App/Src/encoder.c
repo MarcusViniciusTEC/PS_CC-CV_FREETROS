@@ -58,7 +58,7 @@ void encoder_thread(void const *pvParameter)
     for(;;)
     {
         encoder_update();
-        vTaskDelay(30);
+        vTaskDelay(10);
     }
 }
 

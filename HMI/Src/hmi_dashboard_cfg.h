@@ -5,6 +5,8 @@
 #define VOLTAGE_NUMBER_OF_COORDINATE 4
 #define CURRENT_NUMBER_OF_COORDINATE 3
 
+#define NO_DIGIT 0
+
 #define vector_hmi_coordinate_voltage_default   \
 {                                               \
     { 2,12,16,34},                              \

@@ -11,8 +11,8 @@ static const cursor_retangle_t vector_cursor_retangle_current[CURRENT_NUMBER_OF_
 
 static hmi_dashboard_crtl_t hmi_dashboard_crtl = {0};
 
-
 static hmi_edit_value_t hmi_edit_value_voltage;
+static hmi_edit_value_t hmi_edit_value_current;
 
 /***********************************************************************************/
 
@@ -31,14 +31,22 @@ static void hmi_dashboard_decrement_index(void);
 static void hmi_dashboard_cursor_edit_toggle(void);
 
 static void hmi_dashboard_target_voltage(void);
+static void hmi_dashboard_target_current(void);
+
+static void hmi_dashboard_draw_voltage_input(void);
+static void hmi_dashboard_draw_voltage_output(void);
+static void hmi_dashboard_draw_current(void);
+
+static void hmi_dashboard_draw_info_fan(void);
+static void hmi_dashboard_draw_out_state(void);
+
+static void hmi_dashboard_draw_mode_control(void);
 
 /***********************************************************************************/
 
 void hmi_dashboard_init(void)
 {
     hmi_dashboard_crtl.cursor_edit =  HMI_CURSOR_EDIT_VOLTAGE;
-
-    
 }
 
 /***********************************************************************************/
@@ -60,7 +68,6 @@ static void hmi_dashboard_decrement_index(void)
 static void hmi_dashboard_cursor_edit_toggle(void)
 {
     hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit; 
-    HAL_Delay(1);
 }
 
 /***********************************************************************************/
@@ -94,17 +101,32 @@ static void hmi_dashboard_target_voltage(void)
     hmi_edit_value_voltage.digit[INDEX_THIRD_DIGIT ] = 30;
     hmi_edit_value_voltage.digit[INDEX_FOURTH_DIGIT] = 4;
 
-
-    for(uint8_t index = 0; index <= 4; index++)
+    for(hmi_digit_types_t index = 0; index < NUMBER_OF_INDEX_DIGITS; index++)
     {
         value += hmi_edit_value_voltage.digit[index];
     }
 }
 
+/***********************************************************************************/
+
+static void hmi_dashboard_target_current(void)
+{
+    static uint16_t value = 0;
+
+    hmi_edit_value_current.digit[INDEX_FIRST_DIGIT ] = 200;
+    hmi_edit_value_current.digit[INDEX_SECOND_DIGIT] = 30;
+    hmi_edit_value_current.digit[INDEX_THIRD_DIGIT ] = 1;
+    hmi_edit_value_current.digit[INDEX_FOURTH_DIGIT] = NO_DIGIT;
+
+    for(hmi_digit_types_t index = 0; index <= INDEX_FOURTH_DIGIT; index++)
+    {
+        value += hmi_edit_value_current.digit[index];
+    }
+}
 
 /***********************************************************************************/
 
-void hmi_dashboard_update_state_cursor(void)
+static void hmi_dashboard_update_state_cursor(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -121,77 +143,76 @@ void hmi_dashboard_update_state_cursor(void)
 
 /***********************************************************************************/
 
-void hmi_dashboard_show_screen(void)
+static void hmi_dashboard_draw_current(void)
 {
-
+    ssd1306_SetCursor(16, 38);
+    ssd1306_WriteString("2.22A", Font_16x26, White);
 }
 
 /***********************************************************************************/
 
-void hmi_dashboard_update_data(void)
+static void hmi_dashboard_draw_voltage_output(void)
 {
-    ssd1306_Fill(Black);
-    
-    /*===================================================*/
-
-    ssd1306_SetCursor(1, 2);
-    ssd1306_WriteString("Fan 30% 45'C", Font_6x8, White);
-    
-    ssd1306_SetCursor(80, 2);
-    ssd1306_WriteString("25.0Vin", Font_6x8, White);
-    ssd1306_InvertRectangle(0,1,127,9); // bar status
-    
-    hmi_dashboard_target_voltage();
-
-
-    /*===================================================*/
-
-    ssd1306_Line(0,11,99,11, White); 
-    ssd1306_Line(102,35,126,35, White);
-  
-    /*===================================================*/
-
     ssd1306_SetCursor(1, 13);
     ssd1306_WriteString("29.15V", Font_16x26, White); 
-    
-    /*===================================================*/
+}
 
-    ssd1306_Line(0,35,100,35, White);
+/***********************************************************************************/
 
-    /*===================================================*/
-    ssd1306_SetCursor(16, 38);
-    ssd1306_WriteString("2.22A", Font_16x26, White);
-    
-    /*===================================================*/
+static void hmi_dashboard_draw_voltage_intput(void)
+{
 
-    hmi_dashboard_update_state_cursor();
-    
-    /*===================================================*/
-    /*DRAW MODE CC OR CV*/
-    ssd1306_SetCursor(106, 38);
-    ssd1306_WriteString("MOD", Font_6x8, White);
-    ssd1306_InvertRectangle(104,37,124,46);
-    /*===================================================*/
+} 
 
-    ssd1306_SetCursor(107, 50);
-    ssd1306_WriteString("CC", Font_7x10, White);
-    
-    /*===================================================*/
-    
-    ssd1306_Line(100,12,100,63, White);
+/***********************************************************************************/
 
-    /*===================================================*/
+static void hmi_dashboard_draw_info_fan(void)
+{
+    ssd1306_SetCursor(1, 2);
+    ssd1306_WriteString("Fan 30% 45'C", Font_6x8, White);
+} 
 
-    ssd1306_Line(0,12,0,63, White);
-    ssd1306_Line(0,63,99,63, White);
+/***********************************************************************************/
 
+static void hmi_dashboard_draw_out_state(void)
+{
     ssd1306_SetCursor(106, 14);
     ssd1306_WriteString("OUT", Font_6x8, White);
     ssd1306_SetCursor(106, 25);
     ssd1306_WriteString("OFF", Font_6x8, White);
-    ssd1306_InvertRectangle(104,13,124,21);
+}
 
-    /*===================================================*/
+/***********************************************************************************/
+
+static void hmi_dashboard_draw_mode_control(void)
+{
+    ssd1306_SetCursor(106, 38);
+    ssd1306_WriteString("MOD", Font_6x8, White);
+    ssd1306_SetCursor(107, 50);
+    ssd1306_WriteString("CC", Font_7x10, White);
+}
+
+/***********************************************************************************/
+
+void hmi_dashboard_show_screen(void)
+{
+    ssd1306_Fill(Black);
+
+    hmi_dashboard_target_voltage();
+
+    ssd1306_Line(0,11,99,11, White); 
+    ssd1306_Line(102,35,126,35, White);
+  
+    ssd1306_Line(0,35,100,35, White);
+
+    ssd1306_InvertRectangle(104,37,124,46);
+    
+    ssd1306_Line(100,12,100,63, White);
+
+    ssd1306_Line(0,12,0,63, White);
+    ssd1306_Line(0,63,99,63, White);
+
+    ssd1306_InvertRectangle(104,13,124,21);
 
     ssd1306_DrawRectangle(102, 11, 126, 63, White);
 
@@ -201,16 +222,24 @@ void hmi_dashboard_update_data(void)
 
 /***********************************************************************************/
 
+void hmi_dashboard_update_data(void)
+{
+
+}
+
+/***********************************************************************************/
+
 void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t button_press_type)
 {
-    ssd1306_UpdateScreen();
     switch (button_id)
     {
     case BUTTON_LEFT_ID:
         hmi_dashboard_decrement_index();
+        hmi_dashboard_update_state_cursor();
         break;
     case BUTTON_RIGHT_ID:
         hmi_dashboard_increment_index();
+        hmi_dashboard_update_state_cursor();
         break;
     case BUTTON_SEL_CC_CV_ID:
             switch (button_press_type)
@@ -229,6 +258,7 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
         break;
     }
 
+    ssd1306_UpdateScreen();
 }
 
 /***********************************************************************************/
@@ -249,5 +279,10 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
     default:
         break;
     }
-
+    char buff[10];
+    ssd1306_Fill(Black);
+    sprintf(buff,  "%d", count);
+    ssd1306_SetCursor(107, 50);
+    ssd1306_WriteString(buff, Font_7x10, White);
+    ssd1306_UpdateScreen();
 }
