@@ -45,14 +45,14 @@ void hmi_init(void)
     TaskHandle_t xHandle = NULL;
      xTaskCreate((TaskFunction_t)hmi_tread,         /* Function that implements the task. */
                     "HMI",                         /* Text name for the task. */
-                    128	,                                   /* Stack size in words, not bytes. */
+                    256	,                                   /* Stack size in words, not bytes. */
                     NULL,                             /* Parameter passed into the task. */
                     osPriorityRealtime,                        /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */
 
     xTaskCreate((TaskFunction_t)hmi_tread_update_screen,         /* Function that implements the task. */
                     "HMI UPDATE",                         /* Text name for the task. */
-                    128	,                           /* Stack size in words, not bytes. */
+                    256	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
                     osPriorityIdle,                      /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */                

@@ -11,6 +11,9 @@ static const cursor_retangle_t vector_cursor_retangle_current[CURRENT_NUMBER_OF_
 
 static hmi_dashboard_crtl_t hmi_dashboard_crtl = {0};
 
+
+static hmi_edit_value_t hmi_edit_value_voltage;
+
 /***********************************************************************************/
 
 void hmi_dashboard_init(void);
@@ -27,11 +30,15 @@ static void hmi_dashboard_increment_index(void);
 static void hmi_dashboard_decrement_index(void);
 static void hmi_dashboard_cursor_edit_toggle(void);
 
+static void hmi_dashboard_target_voltage(void);
+
 /***********************************************************************************/
 
 void hmi_dashboard_init(void)
 {
     hmi_dashboard_crtl.cursor_edit =  HMI_CURSOR_EDIT_VOLTAGE;
+
+    
 }
 
 /***********************************************************************************/
@@ -78,6 +85,25 @@ static void hmi_dashboard_draw_cursor_voltage(void)
 
 /***********************************************************************************/
 
+static void hmi_dashboard_target_voltage(void)
+{
+    static uint16_t value = 0;
+
+    hmi_edit_value_voltage.digit[INDEX_FIRST_DIGIT ] = 1000;
+    hmi_edit_value_voltage.digit[INDEX_SECOND_DIGIT] = 200;
+    hmi_edit_value_voltage.digit[INDEX_THIRD_DIGIT ] = 30;
+    hmi_edit_value_voltage.digit[INDEX_FOURTH_DIGIT] = 4;
+
+
+    for(uint8_t index = 0; index <= 4; index++)
+    {
+        value += hmi_edit_value_voltage.digit[index];
+    }
+}
+
+
+/***********************************************************************************/
+
 void hmi_dashboard_update_state_cursor(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
@@ -114,6 +140,9 @@ void hmi_dashboard_update_data(void)
     ssd1306_SetCursor(80, 2);
     ssd1306_WriteString("25.0Vin", Font_6x8, White);
     ssd1306_InvertRectangle(0,1,127,9); // bar status
+    
+    hmi_dashboard_target_voltage();
+
 
     /*===================================================*/
 
@@ -123,7 +152,7 @@ void hmi_dashboard_update_data(void)
     /*===================================================*/
 
     ssd1306_SetCursor(1, 13);
-    ssd1306_WriteString("19.15V", Font_16x26, White);
+    ssd1306_WriteString("29.15V", Font_16x26, White); 
     
     /*===================================================*/
 
