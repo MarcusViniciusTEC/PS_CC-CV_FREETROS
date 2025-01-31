@@ -7,6 +7,20 @@
 
 #define NO_DIGIT 0
 
+
+#define display_clear() ssd1306_Fill(Black)
+
+#define display_update() ssd1306_UpdateScreen()  
+
+#define DRAW_INVERT_RECTANGLE_STATUS_BAR        ssd1306_InvertRectangle(0,1,127,9)
+#define DRAW_INVERT_RECTANGLE_MODE              ssd1306_InvertRectangle(104,37,124,46)
+#define DRAW_INVERT_RECTANGLE_OUT_STATE         ssd1306_InvertRectangle(104,13,124,21)
+#define DRAW_MAIN_RECTANGLE                     ssd1306_DrawRectangle(0, 11, 100, 63, White)
+#define DRAW_INFO_RECTANGLE                     ssd1306_DrawRectangle(102, 11, 126, 63, White)
+#define DRAW_LINE_BETWEEN_MAIN_RECTANGLE        ssd1306_Line(1,35,99,35, White)
+#define DRAW_LINE_BETWEEN_INFO_RECTANGLE        ssd1306_Line(102,35,126,35, White)
+
+
 #define vector_hmi_coordinate_voltage_default   \
 {                                               \
     { 2,12,16,34},                              \

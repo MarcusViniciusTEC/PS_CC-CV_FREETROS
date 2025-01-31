@@ -52,7 +52,7 @@ void hmi_init(void)
 
     xTaskCreate((TaskFunction_t)hmi_tread_update_screen,         /* Function that implements the task. */
                     "HMI UPDATE",                         /* Text name for the task. */
-                    256	,                           /* Stack size in words, not bytes. */
+                    512	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
                     osPriorityNormal,                      /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */                

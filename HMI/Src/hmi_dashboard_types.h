@@ -29,14 +29,14 @@ typedef enum
 
 typedef struct 
 {
-    uint8_t index_cursor;
+    hmi_digit_types_t index_digit;
     hmi_cursor_edit_t cursor_edit;
 
 }hmi_dashboard_crtl_t;
 
 typedef struct 
 {
-    uint16_t digit[NUMBER_OF_INDEX_DIGITS];
+    uint8_t digit[NUMBER_OF_INDEX_DIGITS];
 }hmi_edit_value_t;
 
 
