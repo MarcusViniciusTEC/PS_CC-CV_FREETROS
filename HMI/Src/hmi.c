@@ -18,12 +18,9 @@ hmi_ctrl_t hmi_ctrl = {0};
 button_data_t buttons_data_vector[NUMBER_OF_BUTTONS] = vector_buttons_data_default;
 
 /***********************************************************************************/
-// Function prototypes
 
 void hmi_tread(void const *pvParameters);
 void hmi_tread_update_screen(void const *pvParameters);
-
-// private function
 
 static void hmi_showing_screen(void);
 static void hmi_showing_data(void);
@@ -158,7 +155,7 @@ void hmi_tread_update_screen(void const *pvParameters)
 {
     for(;;)
     {
-         hmi_showing_data();
+        hmi_showing_data();
         vTaskDelay(100);
     }
 }

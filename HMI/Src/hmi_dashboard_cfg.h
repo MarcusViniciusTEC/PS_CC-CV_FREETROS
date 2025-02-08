@@ -12,6 +12,9 @@
 
 #define display_update() ssd1306_UpdateScreen()  
 
+#define MAX_DIGIT 9
+#define MIN_DIGIT 0
+
 #define DRAW_INVERT_RECTANGLE_STATUS_BAR        ssd1306_InvertRectangle(0,1,127,9)
 #define DRAW_INVERT_RECTANGLE_MODE              ssd1306_InvertRectangle(104,37,124,46)
 #define DRAW_INVERT_RECTANGLE_OUT_STATE         ssd1306_InvertRectangle(104,13,124,21)

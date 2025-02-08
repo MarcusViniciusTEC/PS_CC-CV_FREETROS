@@ -11,8 +11,7 @@ static const cursor_retangle_t vector_cursor_retangle_current[CURRENT_NUMBER_OF_
 
 static hmi_dashboard_crtl_t hmi_dashboard_crtl = {0};
 
-static hmi_edit_value_t hmi_edit_value_voltage;
-static hmi_edit_value_t hmi_edit_value_current;
+static hmi_edit_value_t hmi_edit_value[HMI_NUMBER_OF_FIELDS_EDITS] = {0};
 
 /***********************************************************************************/
 
@@ -26,9 +25,12 @@ static void hmi_dashboard_draw_cursor_voltage(void);
 static void hmi_dashboard_draw_cursor_current(void);
 static void hmi_dashboard_update_state_cursor(void);
 
-static void hmi_dashboard_increment_index(void);
-static void hmi_dashboard_decrement_index(void);
+static void hmi_dashboard_increment_index_field(void);
+static void hmi_dashboard_decrement_index_field(void);
 static void hmi_dashboard_cursor_edit_toggle(void);
+
+static void hmi_dashboard_decrement_digit(void);
+static void hmi_dashboard_increment_digit(void);
 
 static void hmi_dashboard_target_voltage(void);
 static void hmi_dashboard_target_current(void);
@@ -48,33 +50,152 @@ static void hmi_dashboard_draw_all_parameters(void);
 
 void hmi_dashboard_init(void)
 {
-    hmi_dashboard_crtl.cursor_edit =  HMI_CURSOR_EDIT_VOLTAGE;
+    hmi_dashboard_crtl.cursor_edit =  HMI_CURSOR_EDIT_FIELD_VOLTAGE;
 
-    hmi_edit_value_voltage.digit[INDEX_FIRST_DIGIT ] = 0;
-    hmi_edit_value_voltage.digit[INDEX_SECOND_DIGIT] = 0;
-    hmi_edit_value_voltage.digit[INDEX_THIRD_DIGIT ] = 0;
-    hmi_edit_value_voltage.digit[INDEX_FOURTH_DIGIT] = 0;
+    for(uint8_t index_filed = 0; index_filed < HMI_NUMBER_OF_FIELDS_EDITS; index_filed++)
+    {
+        hmi_edit_value[index_filed].digit[INDEX_FIRST_DIGIT ] = 0;
+        hmi_edit_value[index_filed].digit[INDEX_SECOND_DIGIT] = 0;
+        hmi_edit_value[index_filed].digit[INDEX_THIRD_DIGIT ] = 0;
+        hmi_edit_value[index_filed].digit[INDEX_FOURTH_DIGIT] = 0;
+    }
 }
 
 /***********************************************************************************/
 
-static void hmi_dashboard_increment_index(void)
+static void hmi_dashboard_increment_index_field(void)
 {
-    hmi_dashboard_crtl.index_digit ++;
+    switch (hmi_dashboard_crtl.cursor_edit)
+    {
+    case HMI_CURSOR_EDIT_FIELD_CURRENT:
+        if(hmi_dashboard_crtl.index_digit <= INDEX_FOURTH_DIGIT)
+        {
+            hmi_dashboard_crtl.index_digit++;
+            if(hmi_dashboard_crtl.index_digit >= INDEX_FOURTH_DIGIT)
+            {
+                hmi_dashboard_crtl.index_digit = INDEX_THIRD_DIGIT;
+            }
+        }
+        break;
+    case HMI_CURSOR_EDIT_FIELD_VOLTAGE:
+        if(hmi_dashboard_crtl.index_digit < INDEX_FOURTH_DIGIT)
+        {
+            hmi_dashboard_crtl.index_digit++;
+        } 
+        else if (hmi_dashboard_crtl.index_digit > INDEX_FOURTH_DIGIT)
+        {
+            hmi_dashboard_crtl.index_digit = INDEX_FIRST_DIGIT;
+        }
+        break;
+    default:
+        break;
+    }
 }
 
 /***********************************************************************************/
 
-static void hmi_dashboard_decrement_index(void)
+static void hmi_dashboard_decrement_index_field(void)
 {
-    hmi_dashboard_crtl.index_digit --;
+    switch (hmi_dashboard_crtl.cursor_edit)
+    {
+    case HMI_CURSOR_EDIT_FIELD_CURRENT:
+        if(hmi_dashboard_crtl.index_digit < INDEX_FOURTH_DIGIT)
+        {
+            hmi_dashboard_crtl.index_digit--;
+            if(hmi_dashboard_crtl.index_digit > INDEX_FOURTH_DIGIT)
+            {
+                hmi_dashboard_crtl.index_digit = INDEX_FIRST_DIGIT;
+            }
+        }
+        break;
+    case HMI_CURSOR_EDIT_FIELD_VOLTAGE:
+        if(hmi_dashboard_crtl.index_digit <= INDEX_FOURTH_DIGIT)
+        {
+            hmi_dashboard_crtl.index_digit--;
+            if(hmi_dashboard_crtl.index_digit > INDEX_FOURTH_DIGIT)
+            {
+                hmi_dashboard_crtl.index_digit = INDEX_FIRST_DIGIT;
+            }
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_decrement_digit(void)
+{
+    switch (hmi_dashboard_crtl.cursor_edit)
+    {
+        case HMI_CURSOR_EDIT_FIELD_CURRENT:
+            hmi_edit_value[HMI_CURSOR_EDIT_FIELD_CURRENT].digit[hmi_dashboard_crtl.index_digit] --;
+            break;
+        case HMI_CURSOR_EDIT_FIELD_VOLTAGE:
+            hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[hmi_dashboard_crtl.index_digit] --;
+            break;
+        default:
+        break;
+    }
+    
+    for(uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
+    {
+        if(hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] > MAX_DIGIT)
+        {
+            if(hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit - 1] > MIN_DIGIT)
+            {
+                hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit - 1]  = hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit - 1] - 1; 
+                hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] = MAX_DIGIT;
+            }
+        }
+
+        if (hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] > MAX_DIGIT)
+        {
+            hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] = MIN_DIGIT;
+        }
+    }
+}
+
+/***********************************************************************************/
+
+static void hmi_dashboard_increment_digit(void)
+{
+    switch (hmi_dashboard_crtl.cursor_edit)
+    {
+    case HMI_CURSOR_EDIT_FIELD_CURRENT:
+        hmi_edit_value[HMI_CURSOR_EDIT_FIELD_CURRENT].digit[hmi_dashboard_crtl.index_digit]++;
+        break;
+    case HMI_CURSOR_EDIT_FIELD_VOLTAGE:
+        hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[hmi_dashboard_crtl.index_digit]++;
+        break;
+    default:
+        break;
+    }
+
+    for(uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
+    {
+        if(hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] > MAX_DIGIT)
+        {
+            if(hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit-1] <= MAX_DIGIT )
+            {
+                hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit -1 ] = hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit-1] + 1;
+                hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit] = MIN_DIGIT;
+                if(hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit-1] > MAX_DIGIT)
+                {
+                    hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit - 2] = hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit-2] + 1;
+                    hmi_edit_value[index_field].digit[hmi_dashboard_crtl.index_digit - 1] = MIN_DIGIT;
+                }
+            }
+        }
+    }
 }
 
 /***********************************************************************************/
 
 static void hmi_dashboard_cursor_edit_toggle(void)
 {
-    hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit; 
+    hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit;
 }
 
 /***********************************************************************************/
@@ -101,34 +222,14 @@ static void hmi_dashboard_draw_cursor_voltage(void)
 
 static void hmi_dashboard_target_voltage(void)
 {
-    static uint16_t value = 0;
 
-    hmi_edit_value_voltage.digit[INDEX_FIRST_DIGIT ] = 1000;
-    hmi_edit_value_voltage.digit[INDEX_SECOND_DIGIT] = 200;
-    hmi_edit_value_voltage.digit[INDEX_THIRD_DIGIT ] = 30;
-    hmi_edit_value_voltage.digit[INDEX_FOURTH_DIGIT] = 4;
-
-    for(hmi_digit_types_t index = 0; index < NUMBER_OF_INDEX_DIGITS; index++)
-    {
-        value += hmi_edit_value_voltage.digit[index];
-    }
 }
 
 /***********************************************************************************/
 
 static void hmi_dashboard_target_current(void)
 {
-    static uint16_t value = 0;
 
-    hmi_edit_value_current.digit[INDEX_FIRST_DIGIT ] = 200;
-    hmi_edit_value_current.digit[INDEX_SECOND_DIGIT] = 30;
-    hmi_edit_value_current.digit[INDEX_THIRD_DIGIT ] = 1;
-    hmi_edit_value_current.digit[INDEX_FOURTH_DIGIT] = NO_DIGIT;
-
-    for(hmi_digit_types_t index = 0; index <= INDEX_FOURTH_DIGIT; index++)
-    {
-        value += hmi_edit_value_current.digit[index];
-    }
 }
 
 /***********************************************************************************/
@@ -137,10 +238,10 @@ static void hmi_dashboard_update_state_cursor(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
-    case HMI_CURSOR_EDIT_CURRENT:
+    case HMI_CURSOR_EDIT_FIELD_CURRENT:
         hmi_dashboard_draw_cursor_current();
         break;
-    case HMI_CURSOR_EDIT_VOLTAGE:
+    case HMI_CURSOR_EDIT_FIELD_VOLTAGE:
         hmi_dashboard_draw_cursor_voltage();
         break;;
     default:
@@ -151,9 +252,15 @@ static void hmi_dashboard_update_state_cursor(void)
 /***********************************************************************************/
 
 static void hmi_dashboard_draw_current(void)
-{
+{   
+    char sz_string[15] = {0};
     ssd1306_SetCursor(16, 38);
-    ssd1306_WriteString("2.22A", Font_16x26, White);
+
+    snprintf(sz_string, sizeof(sz_string), "%u.%u%uA", 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_CURRENT].digit[INDEX_FIRST_DIGIT], 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_CURRENT].digit[INDEX_SECOND_DIGIT], 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_CURRENT].digit[INDEX_THIRD_DIGIT]);
+    ssd1306_WriteString(sz_string, Font_16x26, White); 
 }
 
 /***********************************************************************************/
@@ -162,9 +269,11 @@ static void hmi_dashboard_draw_voltage_output(void)
 {
     char sz_string[15] = {0};
     ssd1306_SetCursor(1, 13);
-    snprintf(sz_string, 12, "%u%u.%u%uV", hmi_edit_value_voltage.digit[INDEX_FIRST_DIGIT ], hmi_edit_value_voltage.digit[INDEX_SECOND_DIGIT], 
-    hmi_edit_value_voltage.digit[INDEX_THIRD_DIGIT], hmi_edit_value_voltage.digit[INDEX_FOURTH_DIGIT]);
-
+    snprintf(sz_string, sizeof(sz_string), "%u%u.%u%uV", 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[INDEX_FIRST_DIGIT], 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[INDEX_SECOND_DIGIT], 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[INDEX_THIRD_DIGIT], 
+    hmi_edit_value[HMI_CURSOR_EDIT_FIELD_VOLTAGE].digit[INDEX_FOURTH_DIGIT]);
     ssd1306_WriteString(sz_string, Font_16x26, White); 
 }
 
@@ -208,10 +317,8 @@ static void hmi_dashboard_draw_mode_control(void)
 
 static void hmi_dashboard_draw_all_parameters(void)
 {
-    display_clear();
     hmi_dashboard_draw_info_fan();
     
-
     DRAW_INFO_RECTANGLE; 
     hmi_dashboard_draw_mode_control();
     
@@ -226,10 +333,6 @@ static void hmi_dashboard_draw_all_parameters(void)
     DRAW_MAIN_RECTANGLE;
     DRAW_INVERT_RECTANGLE_STATUS_BAR;
     DRAW_INVERT_RECTANGLE_MODE;
-
-    
-
-
 }
 
 /***********************************************************************************/
@@ -255,12 +358,10 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
     switch (button_id)
     {
     case BUTTON_LEFT_ID:
-        hmi_dashboard_decrement_index();
-        
+        hmi_dashboard_decrement_index_field();
         break;
     case BUTTON_RIGHT_ID:
-        hmi_dashboard_increment_index();
-        
+        hmi_dashboard_increment_index_field();
         break;
     case BUTTON_SEL_CC_CV_ID:
             switch (button_press_type)
@@ -279,11 +380,13 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
         break;
     }
 
+    if(hmi_dashboard_crtl.cursor_edit == HMI_CURSOR_EDIT_FIELD_CURRENT && hmi_dashboard_crtl.index_digit > INDEX_THIRD_DIGIT)
+    {
+        hmi_dashboard_crtl.index_digit = INDEX_THIRD_DIGIT;
+    } 
     display_clear();
     hmi_dashboard_draw_all_parameters();
     display_update();
-
-    
 }
 
 /***********************************************************************************/
@@ -293,49 +396,28 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
     switch (enc_state)
     {
     case ENC_STATE_CCW:
-        switch (hmi_dashboard_crtl.cursor_edit)
-        {
-            case HMI_CURSOR_EDIT_CURRENT:
-                hmi_edit_value_current.digit[hmi_dashboard_crtl.index_digit] --;
-                break;
-            case HMI_CURSOR_EDIT_VOLTAGE:
-                hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit] --;
-                break;
-            default:
-            break;
-        }
+        hmi_dashboard_decrement_digit();
         break;
     case ENC_STATE_CW:
-        switch (hmi_dashboard_crtl.cursor_edit)
-        {
-            case HMI_CURSOR_EDIT_CURRENT:
-                hmi_edit_value_current.digit[hmi_dashboard_crtl.index_digit] ++;
-                break;
-            case HMI_CURSOR_EDIT_VOLTAGE:
-                hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit] ++;
-                break;
-            default:
-            break;
-        }
+        hmi_dashboard_increment_digit();
         break;
     default:
         break;
     }
 
-    if(hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit] > 9)
+    for (uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
     {
-        if(hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit-1] <= 9 )
+        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] >= NUMBER_OF_INDEX_DIGITS)
         {
-            hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit -1 ] = hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit-1] + 1;
-            hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit] = 0;
-            if(hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit-1] > 9)
-            {
-                hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit - 2] = hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit-2] + 1;
-                hmi_edit_value_voltage.digit[hmi_dashboard_crtl.index_digit - 1] = 0;
-            }
+            hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] = 3;
+        }
+        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] == 3)
+        {
+            hmi_edit_value[index_field].digit[INDEX_SECOND_DIGIT] = MIN_DIGIT;
+            hmi_edit_value[index_field].digit[INDEX_THIRD_DIGIT] = MIN_DIGIT;
+            hmi_edit_value[index_field].digit[INDEX_FOURTH_DIGIT] = MIN_DIGIT;
         }
     }
-
 
     display_clear();
     hmi_dashboard_draw_all_parameters();

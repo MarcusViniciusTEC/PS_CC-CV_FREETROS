@@ -23,24 +23,27 @@ typedef enum
 
 typedef enum
 {
-    HMI_CURSOR_EDIT_VOLTAGE = 0U,
-    HMI_CURSOR_EDIT_CURRENT 
+    HMI_CURSOR_EDIT_FIELD_VOLTAGE = 0U,
+    HMI_CURSOR_EDIT_FIELD_CURRENT,
+    HMI_NUMBER_OF_FIELDS_EDITS,
 }hmi_cursor_edit_t;
+
+typedef enum
+{
+    CURSOR_STATE_ON = 0U,
+    CURSOR_STATE_OFF
+}hmi_cursor_state_t;
 
 typedef struct 
 {
     hmi_digit_types_t index_digit;
     hmi_cursor_edit_t cursor_edit;
-
+    hmi_cursor_state_t cursor_state;
 }hmi_dashboard_crtl_t;
 
 typedef struct 
 {
     uint8_t digit[NUMBER_OF_INDEX_DIGITS];
 }hmi_edit_value_t;
-
-
-
-
 
 #endif
