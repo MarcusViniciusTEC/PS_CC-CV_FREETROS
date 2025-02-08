@@ -3,7 +3,7 @@
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 #include "stdio.h"
-
+#include  "buzzer.h"
 /***********************************************************************************/
 
 static const cursor_retangle_t vector_cursor_retangle_voltage[VOLTAGE_NUMBER_OF_COORDINATE] = vector_hmi_coordinate_voltage_default;
@@ -380,6 +380,8 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
         break;
     }
 
+    set_short_pulse_buzzer(BUZZER_MEDIUM_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
+
     if(hmi_dashboard_crtl.cursor_edit == HMI_CURSOR_EDIT_FIELD_CURRENT && hmi_dashboard_crtl.index_digit > INDEX_THIRD_DIGIT)
     {
         hmi_dashboard_crtl.index_digit = INDEX_THIRD_DIGIT;
@@ -404,6 +406,8 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
     default:
         break;
     }
+
+    set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
 
     for (uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
     {
