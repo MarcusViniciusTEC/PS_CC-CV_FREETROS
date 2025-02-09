@@ -8,14 +8,13 @@
 #include "hmi_intro.h"
 #include "buttons_types.h"
 #include "hmi_menu.h"
+#include "hmi_target.h"
 
 #include "hmi.h"
 
 /*******************************************************************************/
 
-#define HMI_NUMBER_OF_SCREENS 3
-
-
+#define HMI_NUMBER_OF_SCREENS 4
 
 /*******************************************************************************/
 
@@ -46,6 +45,15 @@
         hmi_menu_update_data,           \
         hmi_menu_update_button,         \
         hmi_menu_update_encoder         \
+    }                                   \
+    ,                                   \
+    {                                   \
+        HMI_ID_TARGET,                  \
+        hmi_target_init,                \
+        hmi_target_show_screen,         \
+        hmi_target_update_data,         \
+        hmi_target_update_button,       \
+        hmi_target_update_encoder       \
     }                                   \
 }
 

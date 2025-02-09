@@ -47,6 +47,7 @@ ${PROJ_PATH}/HMI/Src/hmi.c
 ${PROJ_PATH}/HMI/Src/hmi_dashboard.c
 ${PROJ_PATH}/HMI/Src/hmi_intro.c
 ${PROJ_PATH}/HMI/Src/hmi_menu.c
+${PROJ_PATH}/HMI/Src/hmi_target.c
 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306.c 
 ${PROJ_PATH}/DISPLAY/Src/ssd1306_tests.c

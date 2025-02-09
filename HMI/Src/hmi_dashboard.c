@@ -1,9 +1,14 @@
+
+/***********************************************************************************/
+
 #include "hmi_dashboard.h"
 #include "hmi_dashboard_types.h"
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 #include "stdio.h"
-#include  "buzzer.h"
+#include "buzzer.h"
+#include "hmi.h"
+
 /***********************************************************************************/
 
 static const cursor_retangle_t vector_cursor_retangle_voltage[VOLTAGE_NUMBER_OF_COORDINATE] = vector_hmi_coordinate_voltage_default;
@@ -21,30 +26,26 @@ void hmi_dashboard_show_data(void);
 void hmi_dashboard_update_screen(button_id_t button_id, button_press_type_t button_press_type);
 void hmi_dashboard_update_encoder(enc_state_t enc_state);
 
-static void hmi_dashboard_draw_cursor_voltage(void);
-static void hmi_dashboard_draw_cursor_current(void);
-static void hmi_dashboard_update_state_cursor(void);
-
-static void hmi_dashboard_increment_index_field(void);
-static void hmi_dashboard_decrement_index_field(void);
-static void hmi_dashboard_cursor_edit_toggle(void);
-
-static void hmi_dashboard_decrement_digit(void);
-static void hmi_dashboard_increment_digit(void);
-
-static void hmi_dashboard_target_voltage(void);
-static void hmi_dashboard_target_current(void);
-
-static void hmi_dashboard_draw_voltage_input(void);
-static void hmi_dashboard_draw_voltage_output(void);
-static void hmi_dashboard_draw_current(void);
+void hmi_dashboard_update_state_cursor(void);
+void hmi_dashboard_set_limits(void);
+void hmi_dashboard_correction_cursor_field_current(void);
+void hmi_dashboard_increment_index_field(void);
+void hmi_dashboard_decrement_index_field(void);
+void hmi_dashboard_decrement_digit(void);
+void hmi_dashboard_increment_digit(void);
+void hmi_dashboard_cursor_edit_toggle(void);
+void hmi_dashboard_draw_voltage_output(void);
+void hmi_dashboard_draw_current(void);
+void hmi_dashboard_draw_out_state(void);
+void hmi_dashboard_draw_mode_control(void);
 
 static void hmi_dashboard_draw_info_fan(void);
-static void hmi_dashboard_draw_out_state(void);
-
-static void hmi_dashboard_draw_mode_control(void);
-
 static void hmi_dashboard_draw_all_parameters(void);
+static void hmi_dashboard_draw_cursor_voltage(void);
+static void hmi_dashboard_draw_cursor_current(void);
+static void hmi_dashboard_target_voltage(void);
+static void hmi_dashboard_target_current(void);
+static void hmi_dashboard_draw_voltage_input(void);
 
 /***********************************************************************************/
 
@@ -63,7 +64,36 @@ void hmi_dashboard_init(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_increment_index_field(void)
+void hmi_dashboard_set_limits(void)
+{
+    for (uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
+    {
+        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] >= NUMBER_OF_INDEX_DIGITS)
+        {
+            hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] = 3;
+        }
+        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] == 3)
+        {
+            hmi_edit_value[index_field].digit[INDEX_SECOND_DIGIT] = MIN_DIGIT;
+            hmi_edit_value[index_field].digit[INDEX_THIRD_DIGIT] = MIN_DIGIT;
+            hmi_edit_value[index_field].digit[INDEX_FOURTH_DIGIT] = MIN_DIGIT;
+        }
+    }
+}
+
+/***********************************************************************************/
+
+void hmi_dashboard_correction_cursor_field_current(void)
+{
+    if (hmi_dashboard_crtl.cursor_edit == HMI_CURSOR_EDIT_FIELD_CURRENT && hmi_dashboard_crtl.index_digit > INDEX_THIRD_DIGIT)
+    {
+        hmi_dashboard_crtl.index_digit = INDEX_THIRD_DIGIT;
+    }
+}
+
+/***********************************************************************************/
+
+void hmi_dashboard_increment_index_field(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -94,7 +124,7 @@ static void hmi_dashboard_increment_index_field(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_decrement_index_field(void)
+void hmi_dashboard_decrement_index_field(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -125,7 +155,7 @@ static void hmi_dashboard_decrement_index_field(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_decrement_digit(void)
+void hmi_dashboard_decrement_digit(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -159,7 +189,7 @@ static void hmi_dashboard_decrement_digit(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_increment_digit(void)
+void hmi_dashboard_increment_digit(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -193,14 +223,14 @@ static void hmi_dashboard_increment_digit(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_cursor_edit_toggle(void)
+void hmi_dashboard_cursor_edit_toggle(void)
 {
     hmi_dashboard_crtl.cursor_edit =! hmi_dashboard_crtl.cursor_edit;
 }
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_cursor_current(void)
+void hmi_dashboard_draw_cursor_current(void)
 {
     cursor_retangle_t cursor_current = {0};
 
@@ -210,7 +240,7 @@ static void hmi_dashboard_draw_cursor_current(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_cursor_voltage(void)
+void hmi_dashboard_draw_cursor_voltage(void)
 {
     cursor_retangle_t cursor_voltage = {0};
 
@@ -234,7 +264,7 @@ static void hmi_dashboard_target_current(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_update_state_cursor(void)
+void hmi_dashboard_update_state_cursor(void)
 {
     switch (hmi_dashboard_crtl.cursor_edit)
     {
@@ -251,7 +281,7 @@ static void hmi_dashboard_update_state_cursor(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_current(void)
+void hmi_dashboard_draw_current(void)
 {   
     char sz_string[15] = {0};
     ssd1306_SetCursor(16, 38);
@@ -265,7 +295,7 @@ static void hmi_dashboard_draw_current(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_voltage_output(void)
+void hmi_dashboard_draw_voltage_output(void)
 {
     char sz_string[15] = {0};
     ssd1306_SetCursor(1, 13);
@@ -295,7 +325,7 @@ static void hmi_dashboard_draw_info_fan(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_out_state(void)
+void hmi_dashboard_draw_out_state(void)
 {
     ssd1306_SetCursor(106, 14);
     ssd1306_WriteString("OUT", Font_6x8, White);
@@ -305,7 +335,7 @@ static void hmi_dashboard_draw_out_state(void)
 
 /***********************************************************************************/
 
-static void hmi_dashboard_draw_mode_control(void)
+void hmi_dashboard_draw_mode_control(void)
 {
     ssd1306_SetCursor(106, 38);
     ssd1306_WriteString("MOD", Font_6x8, White);
@@ -370,7 +400,7 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
                 hmi_dashboard_cursor_edit_toggle();
                 break;
             case BUTTON_LONG_PRESS:
-
+                hmi_set_screen(HMI_ID_TARGET);
                 break;
             default:
                 break;
@@ -382,10 +412,8 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
 
     set_short_pulse_buzzer(BUZZER_MEDIUM_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
 
-    if(hmi_dashboard_crtl.cursor_edit == HMI_CURSOR_EDIT_FIELD_CURRENT && hmi_dashboard_crtl.index_digit > INDEX_THIRD_DIGIT)
-    {
-        hmi_dashboard_crtl.index_digit = INDEX_THIRD_DIGIT;
-    } 
+    hmi_dashboard_correction_cursor_field_current();
+
     display_clear();
     hmi_dashboard_draw_all_parameters();
     display_update();
@@ -407,21 +435,9 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
         break;
     }
 
-    set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
+    hmi_dashboard_set_limits();
 
-    for (uint8_t index_field = 0; index_field < HMI_NUMBER_OF_FIELDS_EDITS; index_field++)
-    {
-        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] >= NUMBER_OF_INDEX_DIGITS)
-        {
-            hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] = 3;
-        }
-        if (hmi_edit_value[index_field].digit[INDEX_FIRST_DIGIT] == 3)
-        {
-            hmi_edit_value[index_field].digit[INDEX_SECOND_DIGIT] = MIN_DIGIT;
-            hmi_edit_value[index_field].digit[INDEX_THIRD_DIGIT] = MIN_DIGIT;
-            hmi_edit_value[index_field].digit[INDEX_FOURTH_DIGIT] = MIN_DIGIT;
-        }
-    }
+    set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
 
     display_clear();
     hmi_dashboard_draw_all_parameters();
