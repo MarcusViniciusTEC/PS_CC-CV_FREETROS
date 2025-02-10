@@ -4,7 +4,7 @@
 #include "hmi_target.h"
 #include "hmi_target_types.h"
 #include "hmi_dashboard.h"
-#include "hmi_dashboard_cfg.h";
+#include "hmi_dashboard_cfg.h"
 #include "hmi.h"
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
@@ -63,6 +63,7 @@ void hmi_target_show_screen(void)
 
 void hmi_target_update_data(void)
 {
+    hmi_dashboard_update_cursor();
 }
 
 /***********************************************************************************/
@@ -94,8 +95,8 @@ void hmi_target_update_button(button_id_t button_id, button_press_type_t button_
         break;
     }
 
+    hmi_dashboard_cursor_update_status();
     set_short_pulse_buzzer(BUZZER_MEDIUM_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
-
     hmi_dashboard_correction_cursor_field_current();
 
     display_clear();
@@ -120,7 +121,7 @@ void hmi_target_update_encoder(enc_state_t enc_state)
     }
 
     hmi_dashboard_set_limits();
-
+    hmi_dashboard_cursor_update_status();
     set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
 
     display_clear();

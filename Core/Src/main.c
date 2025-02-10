@@ -25,6 +25,9 @@
 
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
+#include "buzzer.h"
+#include "hmi.h"
+#include "encoder.h"
 
 /* USER CODE END Includes */
 

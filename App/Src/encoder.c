@@ -26,7 +26,7 @@ void encoder_init(void)
                     "ENCODER",                      /* Text name for the task. */
                     128	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
-                    osPriorityNormal,               /* Priority at which the task is created. */
+                    osPriorityAboveNormal,               /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */
 }
 
@@ -58,7 +58,7 @@ void encoder_thread(void const *pvParameter)
     for(;;)
     {
         encoder_update();
-        vTaskDelay(10);
+        vTaskDelay(5);
     }
 }
 

@@ -14,6 +14,7 @@
 
 #define MAX_DIGIT 9
 #define MIN_DIGIT 0
+#define TIME_SHOW_CURSOR 8000
 
 #define DRAW_INVERT_RECTANGLE_STATUS_BAR        ssd1306_InvertRectangle(0,1,127,9)
 #define DRAW_INVERT_RECTANGLE_MODE              ssd1306_InvertRectangle(104,37,124,46)

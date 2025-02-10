@@ -31,14 +31,19 @@ hmi_screens_id_t hmi_get_screen(void);
 
 /***********************************************************************************/
 
-static const encoder_data_t encoder_data [] = {{hmi_showing_update_data_encoder, 0, 0}};
+static encoder_data_t encoder_data [] = {{hmi_showing_update_data_encoder, 0, 0}};
 
 /***********************************************************************************/
 
 void hmi_init(void)
 {
+
+    for(hmi_ctrl.screen_id = 0; hmi_ctrl.screen_id < HMI_NUMBER_OF_SCREENS; hmi_ctrl.screen_id++)
+    {
+        hmi_vector_screens[hmi_ctrl.screen_id].init();
+    }
+    
     hmi_ctrl.screen_id = HMI_ID_INTRO;
-    hmi_vector_screens[hmi_ctrl.screen_id].init();
     TaskHandle_t xHandle = NULL;
      xTaskCreate((TaskFunction_t)hmi_tread,         /* Function that implements the task. */
                     "HMI",                         /* Text name for the task. */
