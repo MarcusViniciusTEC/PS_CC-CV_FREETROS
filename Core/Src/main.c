@@ -28,7 +28,7 @@
 #include "buzzer.h"
 #include "hmi.h"
 #include "encoder.h"
-
+#include "led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -364,7 +364,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(MCU_STATUS_LED_GPIO_Port, MCU_STATUS_LED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_MCU_STATUS_Pin|LED_MCU_STAUTS_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(RELAY_OUT_GPIO_Port, RELAY_OUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_UART_RX_Pin|LED_UART_TX_Pin|LED_MCU_STATUS_2_Pin|LED_MCU_STATUS_Pin
+                          |LED_MCU_STATUS_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : MCU_STATUS_LED_Pin */
   GPIO_InitStruct.Pin = MCU_STATUS_LED_Pin;
@@ -372,6 +376,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(MCU_STATUS_LED_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BOARD_MODE_Pin */
+  GPIO_InitStruct.Pin = BOARD_MODE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BOARD_MODE_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : ENC_BT_Pin BT_LEFT_Pin BT_SEL_CC_CV_Pin BT_RIGHT_Pin
                            BT_OUT_STATE_Pin */
@@ -381,8 +391,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_MCU_STATUS_Pin LED_MCU_STAUTS_1_Pin */
-  GPIO_InitStruct.Pin = LED_MCU_STATUS_Pin|LED_MCU_STAUTS_1_Pin;
+  /*Configure GPIO pin : RELAY_OUT_Pin */
+  GPIO_InitStruct.Pin = RELAY_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(RELAY_OUT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED_UART_RX_Pin LED_UART_TX_Pin LED_MCU_STATUS_2_Pin LED_MCU_STATUS_Pin
+                           LED_MCU_STATUS_1_Pin */
+  GPIO_InitStruct.Pin = LED_UART_RX_Pin|LED_UART_TX_Pin|LED_MCU_STATUS_2_Pin|LED_MCU_STATUS_Pin
+                          |LED_MCU_STATUS_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -414,11 +433,22 @@ void StartDefaultTask(void const * argument)
   hmi_init();
   encoder_init();
   buzzer_init();
-  TIM1->CCR1 =0;
+  led_init();
   for(;;)
   {
-    HAL_GPIO_TogglePin(LED_MCU_STAUTS_1_GPIO_Port, LED_MCU_STAUTS_1_Pin);
-    vTaskDelay(1000);
+    static uint16_t time = 0;
+
+    if(time > 0)
+    {
+      time --;
+    }
+    else
+    {
+      time = 5;
+      led_set_pulse(LED_NAME_USER, LED_MODE_SHORT_PULSE);
+    }
+
+    vTaskDelay(200);
   }
   /* USER CODE END 5 */
 }

@@ -18,7 +18,6 @@ void hmi_target_update_data(void);
 void hmi_target_update_button(button_id_t button_id, button_press_type_t button_press_type);
 void hmi_target_update_encoder(enc_state_t enc_state);
 
-
 static void hmi_target_draw_all_parameters(void);
 
 /***********************************************************************************/

@@ -61,6 +61,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCU_STATUS_LED_Pin GPIO_PIN_13
 #define MCU_STATUS_LED_GPIO_Port GPIOC
+#define BOARD_MODE_Pin GPIO_PIN_0
+#define BOARD_MODE_GPIO_Port GPIOA
 #define ENC_BT_Pin GPIO_PIN_0
 #define ENC_BT_GPIO_Port GPIOB
 #define BT_LEFT_Pin GPIO_PIN_12
@@ -71,10 +73,18 @@ void Error_Handler(void);
 #define BT_RIGHT_GPIO_Port GPIOB
 #define BT_OUT_STATE_Pin GPIO_PIN_15
 #define BT_OUT_STATE_GPIO_Port GPIOB
+#define RELAY_OUT_Pin GPIO_PIN_15
+#define RELAY_OUT_GPIO_Port GPIOA
+#define LED_UART_RX_Pin GPIO_PIN_3
+#define LED_UART_RX_GPIO_Port GPIOB
+#define LED_UART_TX_Pin GPIO_PIN_4
+#define LED_UART_TX_GPIO_Port GPIOB
+#define LED_MCU_STATUS_2_Pin GPIO_PIN_5
+#define LED_MCU_STATUS_2_GPIO_Port GPIOB
 #define LED_MCU_STATUS_Pin GPIO_PIN_8
 #define LED_MCU_STATUS_GPIO_Port GPIOB
-#define LED_MCU_STAUTS_1_Pin GPIO_PIN_9
-#define LED_MCU_STAUTS_1_GPIO_Port GPIOB
+#define LED_MCU_STATUS_1_Pin GPIO_PIN_9
+#define LED_MCU_STATUS_1_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

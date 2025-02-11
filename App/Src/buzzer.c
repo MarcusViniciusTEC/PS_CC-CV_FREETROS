@@ -45,7 +45,7 @@ static void buzzer_set_vol(buzzer_vol_t volume)
 void buzzer_init(void)
 {
     TaskHandle_t xHandle = NULL;
-
+    buzzer_set_vol(BUZZER_MUTE);
     if(queue_buzzer == NULL)
     {
         queue_buzzer = xQueueCreate((UBaseType_t) (10), sizeof(queue_buzzer_crtl_t));

@@ -42,6 +42,7 @@ set(sources_SRCS
 ${PROJ_PATH}/App/Src/buttons.c
 ${PROJ_PATH}/App/Src/encoder.c
 ${PROJ_PATH}/App/Src/buzzer.c
+${PROJ_PATH}/App/Src/led.c
 
 ${PROJ_PATH}/HMI/Src/hmi.c
 ${PROJ_PATH}/HMI/Src/hmi_dashboard.c
