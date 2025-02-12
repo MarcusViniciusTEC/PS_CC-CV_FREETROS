@@ -26,7 +26,7 @@ void encoder_init(void)
                     "ENCODER",                      /* Text name for the task. */
                     128	,                           /* Stack size in words, not bytes. */
                     NULL,                           /* Parameter passed into the task. */
-                    osPriorityAboveNormal,               /* Priority at which the task is created. */
+                    osPriorityNormal,               /* Priority at which the task is created. */
                     &xHandle );                     /* Used to pass out the created task's handle. */
 }
 

@@ -434,6 +434,9 @@ void StartDefaultTask(void const * argument)
   encoder_init();
   buzzer_init();
   led_init();
+ 
+
+  HAL_GPIO_WritePin(MCU_STATUS_LED_GPIO_Port, MCU_STATUS_LED_Pin, GPIO_PIN_SET);
   for(;;)
   {
     static uint16_t time = 0;
@@ -444,11 +447,11 @@ void StartDefaultTask(void const * argument)
     }
     else
     {
-      time = 5;
+      time = 2;
       led_set_pulse(LED_NAME_USER, LED_MODE_SHORT_PULSE);
     }
-
-    vTaskDelay(200);
+   // led_set_pulse(LED_NAME_UART_TX, LED_MODE_HEARTBEAT_PULSE);
+    vTaskDelay(500);
   }
   /* USER CODE END 5 */
 }

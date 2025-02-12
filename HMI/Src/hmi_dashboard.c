@@ -531,7 +531,6 @@ void hmi_dashboard_update_encoder(enc_state_t enc_state)
         break;
     }
 
-    led_set_pulse(LED_NAME_MCU_STATUS, LED_MODE_SHORT_PULSE);
     hmi_dashboard_cursor_update_status();
     hmi_dashboard_set_limits();
     set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);

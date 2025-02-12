@@ -192,7 +192,7 @@ void ssd1306_UpdateScreen(void) {
         ssd1306_WriteCommand(0x10 + SSD1306_X_OFFSET_UPPER);
         ssd1306_WriteData(&SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
     }
-    led_set_pulse(LED_NAME_UPDATE_DISPLAY, LED_MODE_SHORT_PULSE);
+   // led_set_pulse(LED_NAME_UPDATE_DISPLAY, LED_MODE_SHORT_PULSE);
 }
 
 /*

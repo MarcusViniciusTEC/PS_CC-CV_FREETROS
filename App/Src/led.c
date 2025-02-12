@@ -9,16 +9,16 @@
 
 /***********************************************************************************/
 
-led_data_t led_vector_data_default[3] = vector_led_board_defaut;
+led_data_t led_vector_data_default[LED_NUMBER_OF_NAMES] = vector_led_board_defaut;
 
 QueueHandle_t queue_led = NULL;
-
 
 /***********************************************************************************/
 
 void led_init(void);
 void led_update_state(void);
 void led_thread(void const *pvParameters);
+static void led_heartbeat_mode_update(void);
 
 /***********************************************************************************/
 
@@ -29,7 +29,7 @@ void led_thread(void const *pvParameters)
     {
         if (xQueueReceive(queue_led, &queue_led_received, 10 == pdPASS))
         {
-            for (uint8_t index_led = 0; index_led < 3; index_led++)
+            for (uint8_t index_led = 0; index_led < LED_NUMBER_OF_NAMES; index_led++)
             {
                 if (queue_led_received.name == led_vector_data_default[index_led].name)
                 {
@@ -39,7 +39,7 @@ void led_thread(void const *pvParameters)
             }
         }
 
-        for (uint8_t index_led = 0; index_led < 3; index_led++)
+        for (uint8_t index_led = 0; index_led < LED_NUMBER_OF_NAMES; index_led++)
         {
             switch (led_vector_data_default[index_led].state)
             {
@@ -55,7 +55,6 @@ void led_thread(void const *pvParameters)
                 led_vector_data_default[index_led].state = LED_STATE_WAIT_DELAY;
                 break;
             case LED_STATE_WAIT_DELAY:
-
                 switch (led_vector_data_default[index_led].mode)
                 {
                 case LED_MODE_ON:
@@ -84,7 +83,13 @@ void led_thread(void const *pvParameters)
                     }
                     break;
                 case LED_MODE_HEARTBEAT_PULSE:
-                    
+
+                if (xTaskGetTickCount() - led_vector_data_default[index_led].last_tick >= 30)
+                {
+                    HAL_GPIO_WritePin(led_vector_data_default[index_led].GPIO, led_vector_data_default[index_led].pin, GPIO_PIN_RESET);
+                    led_vector_data_default[index_led].last_tick = xTaskGetTickCount();
+                }
+                HAL_GPIO_WritePin(led_vector_data_default[index_led].GPIO, led_vector_data_default[index_led].pin, GPIO_PIN_SET);
                     break;
                 default:
                     break;
@@ -98,7 +103,14 @@ void led_thread(void const *pvParameters)
                 break;
             }
         }
+       vTaskDelay(5);
     }
+}
+
+/***********************************************************************************/
+static void led_heartbeat_mode_update(void)
+{
+
 }
 
 /***********************************************************************************/
@@ -129,10 +141,10 @@ void led_init(void)
                      "LED",                      /* Text name for the task. */
                      64,                         /* Stack size in words, not bytes. */
                      NULL,                       /* Parameter passed into the task. */
-                     osPriorityNormal,           /* Priority at which the task is created. */
+                     osPriorityNormal ,           /* Priority at which the task is created. */
                      &xHandle)) != pdPASS)       /* Used to pass out the created task's handle. */
     {
-        HAL_GPIO_TogglePin(led_vector_data_default[0].GPIO, led_vector_data_default[0].pin);
+        
     }
 }
 

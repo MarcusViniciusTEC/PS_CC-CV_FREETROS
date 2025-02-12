@@ -11,6 +11,8 @@
 #include "task.h"
 #include "cmsis_os.h"
 
+#include "led.h"
+
 /***********************************************************************************/
 
 hmi_screen_info_t hmi_vector_screens[HMI_NUMBER_OF_SCREENS] = vector_hmi_screens_default;
@@ -150,7 +152,7 @@ void hmi_tread(void const *pvParameters)
         default:
             break;
         }
-        vTaskDelay(1);
+        vTaskDelay(10);
     }
 }
 
@@ -161,7 +163,8 @@ void hmi_tread_update_screen(void const *pvParameters)
     for(;;)
     {
         hmi_showing_data();
-        vTaskDelay(100);
+        led_set_pulse(LED_NAME_UPDATE_DISPLAY, LED_MODE_HEARTBEAT_PULSE);
+        vTaskDelay(500);
     }
 }
 

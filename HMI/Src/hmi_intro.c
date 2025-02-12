@@ -3,8 +3,12 @@
 
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
+#include "buzzer.h"
+#include "led.h"
 
 #include "hmi.h"
+
+
 
 /***********************************************************************************/
 
@@ -32,8 +36,20 @@ void hmi_intro_show_screen(void)
 void hmi_intro_update_data(void)
 {
     static uint32_t last_tick = 0;
+    led_set_pulse(LED_NAME_MCU_STATUS, LED_MODE_HEARTBEAT_PULSE);
+    led_set_pulse(LED_NAME_UPDATE_DISPLAY, LED_MODE_HEARTBEAT_PULSE);
+    led_set_pulse(LED_NAME_USER, LED_MODE_HEARTBEAT_PULSE);
+    led_set_pulse(LED_NAME_UART_RX, LED_MODE_HEARTBEAT_PULSE);
+    led_set_pulse(LED_NAME_UART_TX, LED_MODE_HEARTBEAT_PULSE);
+    
     if(HAL_GetTick() - last_tick >= TIME_EXECUTIN_INTRO)
     {
+        led_set_pulse(LED_NAME_MCU_STATUS, LED_MODE_OFF);
+        led_set_pulse(LED_NAME_UPDATE_DISPLAY, LED_MODE_OFF);
+        led_set_pulse(LED_NAME_USER, LED_MODE_OFF);
+        led_set_pulse(LED_NAME_UART_RX, LED_MODE_OFF);
+        led_set_pulse(LED_NAME_USER, LED_MODE_OFF);
+        set_short_pulse_buzzer(BUZZER_SHORT_PULSE, BUZZER_AUTO_RESTART_OFF, BUZZER_PULSE_INIT, BUZZER_VOL_MEDIUM);
         hmi_set_screen(HMI_ID_DASHBOARD);
     }
 }
@@ -42,15 +58,7 @@ void hmi_intro_update_data(void)
 
 void hmi_intro_update_button(button_id_t button_id, button_press_type_t button_press_type)
 {
-    switch (button_id)
-    {
-    case BUTTON_ENC_ID:
-        hmi_set_screen(HMI_ID_DASHBOARD);
-        break;
-    
-    default:
-        break;
-    }
+
 }
 
 /***********************************************************************************/

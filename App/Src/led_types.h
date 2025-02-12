@@ -3,6 +3,13 @@
 
 #include "led_cfg.h"
 
+
+typedef enum 
+{
+    LED_AUTO_RELOAD_ON = 0,
+    LED_AUTO_RELOAD_OFF
+}led_auto_reload_type_t;
+
 typedef enum
 {
     LED_NAME_MCU_STATUS  = 0U,
