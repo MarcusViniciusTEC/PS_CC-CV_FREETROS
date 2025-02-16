@@ -490,17 +490,31 @@ void hmi_dashboard_update_button(button_id_t button_id, button_press_type_t butt
         hmi_dashboard_increment_index_field();
         break;
     case BUTTON_SEL_CC_CV_ID:
-            switch (button_press_type)
-            {
-            case BUTTON_SHORT_PRESS:
-                hmi_dashboard_cursor_edit_toggle();
-                break;
-            case BUTTON_LONG_PRESS:
-                hmi_set_screen(HMI_ID_TARGET);
-                break;
-            default:
-                break;
-            }
+        switch (button_press_type)
+        {
+        case BUTTON_SHORT_PRESS:
+            hmi_dashboard_cursor_edit_toggle();
+            break;
+        case BUTTON_LONG_PRESS:
+            hmi_set_screen(HMI_ID_TARGET);
+            break;
+        default:
+            break;
+        }
+        break;
+    case BUTTON_ENC_ID:
+        switch (button_press_type)
+        {
+        case BUTTON_SHORT_PRESS:
+            break;
+        case BUTTON_LONG_PRESS:
+            hmi_set_screen(HMI_ID_MENU);
+            break;
+        default:
+            break;
+        }
+
+        break;
         break;
     default:
         break;

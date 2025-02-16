@@ -23,7 +23,7 @@ void read_buttons_state(button_data_t *button_event)
     {
         if(pin_state == GPIO_PIN_RESET)
         {
-            if(current_time > (button_event->start_time + 800))
+            if(current_time > (button_event->start_time + 1000))
             {
             if(button_event->button_handler)
                 {

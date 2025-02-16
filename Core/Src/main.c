@@ -448,7 +448,7 @@ void StartDefaultTask(void const * argument)
     else
     {
       time = 2;
-      led_set_pulse(LED_NAME_USER, LED_MODE_SHORT_PULSE);
+      led_set_pulse(LED_NAME_UART_TX, LED_MODE_SHORT_PULSE);
     }
    // led_set_pulse(LED_NAME_UART_TX, LED_MODE_HEARTBEAT_PULSE);
     vTaskDelay(500);
