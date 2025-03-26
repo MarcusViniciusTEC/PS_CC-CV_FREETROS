@@ -18,7 +18,7 @@ QueueHandle_t queue_led = NULL;
 void led_init(void);
 void led_update_state(void);
 void led_thread(void const *pvParameters);
-static void led_heartbeat_mode_update(void);
+
 
 /***********************************************************************************/
 
@@ -105,12 +105,6 @@ void led_thread(void const *pvParameters)
         }
        vTaskDelay(5);
     }
-}
-
-/***********************************************************************************/
-static void led_heartbeat_mode_update(void)
-{
-
 }
 
 /***********************************************************************************/

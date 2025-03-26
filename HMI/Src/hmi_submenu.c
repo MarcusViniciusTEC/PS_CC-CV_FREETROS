@@ -18,12 +18,12 @@ uint8_t item_index = 0;
 /***********************************************************************************/
 
 void hmi_submenu_set_screen(menu_item_id_t sub_id) ;
+
 static const cursor_retangle_t vector_cursor_retangle[HMI_MENU_NUMBER_OF_ITEMS] = vector_hmi_coordinate_retangle_menu_default;
+
 void hmi_sub_menu_update_data_button(button_id_t *button_id, button_press_type_t *button_press_type, hmi_submenu_data_t *hmi_submenu_data_t);
 void hmi_sub_menu_update_data_encoder(enc_state_t *enc_state);
 void hmi_submenu_show_items_screen(hmi_submenu_data_t *hmi_submenu_data) ;
-
-
 
 /***********************************************************************************/
 
@@ -54,15 +54,10 @@ void hmi_submenu_show_items_screen(hmi_submenu_data_t *hmi_submenu_data)
 
     for (uint8_t index = 0; index <= hmi_submenu_data->number_itens; index++)
     {
-        //ssd1306_SetCursor(10, 14+(index*10));
-       // ssd1306_WriteString(hmi_submenu_data->string[index], Font_6x8, White) ;
-
         snprintf(sz_string, sizeof(sz_string), "%s = %u", hmi_submenu_data->string[index], hmi_submenu_data->value[index]);
         ssd1306_SetCursor(5, 14+(index*10));
         ssd1306_WriteString(sz_string, Font_6x8, White) ;
     }
-    
-    
     hmi_submenu_show_draw_cursor();
     ssd1306_UpdateScreen();
 }

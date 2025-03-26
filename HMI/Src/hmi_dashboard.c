@@ -345,7 +345,7 @@ void hmi_dashboard_update_cursor(void)
     switch (hmi_dashboard_crtl.cursor_state)
     {
     case CURSOR_STATE_ON:
-        if ((xTaskGetTickCount() - hmi_dashboard_crtl.last_time_cursor )>= TIME_SHOW_CURSOR)
+        if ((xTaskGetTickCount() - hmi_dashboard_crtl.last_time_cursor )>= (uint32_t)TIME_SHOW_CURSOR)
         {
             hmi_dashboard_crtl.cursor_state = CURSOR_STATE_OFF;
             hmi_dashboard_crtl.last_time_cursor = xTaskGetTickCount();
