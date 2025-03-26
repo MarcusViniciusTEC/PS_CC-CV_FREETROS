@@ -25,7 +25,7 @@ void hmi_intro_show_screen(void)
     ssd1306_SetCursor(0, 10);
     ssd1306_WriteString("POWER SUPPLY CC/CV", Font_7x10, White);
     ssd1306_SetCursor(30, 28);
-    ssd1306_WriteString("Init...", Font_7x10, White);
+    ssd1306_WriteString("Init... 19992787348", Font_7x10, White);
     ssd1306_SetCursor(20, 50);
     ssd1306_WriteString("** MV TECH **", Font_7x10, White);
     ssd1306_UpdateScreen();
